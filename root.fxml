@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="509.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Rootcontrol">
+   <children>
+      <ScrollPane fx:id="scrollPane" layoutX="65.0" layoutY="64.0" prefHeight="278.0" prefWidth="338.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <ImageView fx:id="imageView" fitHeight="273.0" fitWidth="405.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="https://news.seoul.go.kr/traffic/files/2018/12/5c08cb3a7e76f9.13618489-1024x830.jpg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
+      <TextField fx:id="Start_station" layoutX="448.0" layoutY="145.0" onAction="#Input_start" prefHeight="22.0" prefWidth="217.0" />
+      <TextField fx:id="End_station" layoutX="448.0" layoutY="244.0" onAction="#Input_end" prefHeight="22.0" prefWidth="217.0" />
+      <Label layoutX="446.0" layoutY="213.0" text="도착역">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="446.0" layoutY="105.0" prefHeight="29.0" prefWidth="91.0" text="출발역">
+         <font>
+            <Font name="Harrington" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="test_label" layoutX="234.0" layoutY="354.0" prefHeight="14.0" prefWidth="199.0" text="Label" />
+   </children>
+</Pane>
