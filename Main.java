@@ -103,6 +103,8 @@ public class Main extends Application {
 	// 길찾기(다익스트라 알고리즘)
 	static n_s dijkstra(Station start, Station end) {
 
+		System.out.println(start.Station_name + " " + end.Station_name);
+
 		// 효율적으로 최솟값을 찾기위한 우선순위큐
 		PriorityQueue<n_s> pq = new PriorityQueue<n_s>();
 
@@ -113,34 +115,43 @@ public class Main extends Application {
 		// 역갯수만큼 공간 생성
 		for (Map.Entry<String, ArrayList<Station>> pair : St.entrySet()) {
 			visit.put(pair.getKey(), new boolean[pair.getValue().size()]);
-			time.put(pair.getKey(), new int[pair.getValue().size() + 1]);
+			time.put(pair.getKey(), new int[pair.getValue().size()]);
 			Arrays.fill(time.get(pair.getKey()), INF);
 		}
 
 		// 출발역을 추가하여 시작
 		n_s temp = new n_s();
 		time.get(start.line)[start.Station_num] = 0;
-		temp = copy((n_s) start, time);
+		temp.Station_name = start.Station_name;
+		temp.line = start.line;
+		temp.time = time.get(start.line)[start.Station_num];
+		temp.Station_num = start.Station_num;
 
 		pq.add(temp);
 
 		// 다익스트라 알고리즘
-		while (!visit.get(end.line)[end.Station_num] && !pq.isEmpty()) {
+		while (!pq.isEmpty()) {
 			n_s cur = pq.poll();
-			if (cur.line == end.line && cur.Station_num == end.Station_num) {
+			if (cur.line.equals(end.line) && cur.Station_num == end.Station_num) {
 				return cur;
 			}
 			if (!visit.get(cur.line)[cur.Station_num]) {
 				visit.get(cur.line)[cur.Station_num] = true;
-				for (var next : cur.next_station) {
-					if (time.get(next.line)[next.Station_num] > time.get(cur.line)[cur.Station_num] + next.time) {
+
+				for (var next : St.get(cur.line).get(cur.Station_num).next_station) {
+					if (!visit.get(next.line)[next.Station_num]
+							&& time.get(next.line)[next.Station_num] > time.get(cur.line)[cur.Station_num]
+									+ next.time) {
 						time.get(next.line)[next.Station_num] = time.get(cur.line)[cur.Station_num] + next.time;
 						temp = new n_s();
-						if (cur.line != next.line) {
-							temp.transfer.add(
-									new Transfer(next.Station_name, next.line, time.get(next.line)[next.Station_num]));
+						if (!cur.line.equals(next.line)) {
+
+							cur.transfer.add(new Transfer(St.get(cur.line).get(cur.Station_num).Station_name,
+									next.line, time.get(next.line)[next.Station_num]));
 						}
-						temp = copy(next, time);
+						temp = copy(next, time.get(next.line)[next.Station_num],
+								(ArrayList<Transfer>) cur.transfer.clone());
+						
 						pq.add(temp);
 					}
 				}
@@ -149,12 +160,13 @@ public class Main extends Application {
 		return new n_s();
 	}
 
-	static n_s copy(n_s co, HashMap<String, int[]> time) {
+	static n_s copy(n_s co, int time, ArrayList<Transfer> t) {
 		n_s temp = new n_s();
 		temp.Station_name = co.Station_name;
 		temp.line = co.line;
-		temp.time = time.get(co.line)[co.Station_num];
+		temp.time = time;
 		temp.Station_num = co.Station_num;
+		temp.transfer = t;
 		return temp;
 	}
 
@@ -181,7 +193,6 @@ public class Main extends Application {
 				// 필요한 정보 추출
 				String[] temp = subway.split(" ");
 				if (temp.length > 3) {
-					// System.out.println(subway);
 					for (int k = 0; k < temp.length; k++) {
 						String[] im = temp[k].split(":");
 						if (im.length > 1) {
@@ -198,12 +209,10 @@ public class Main extends Application {
 								im[1] = im[1].replace(")", "");
 								String[] next = im[1].split("-");
 								for (String g : next) {
-									System.out.print(g + " ");
 									String[] nim = g.split(",");
-									tmp.next_station
-											.add(new n_s(nim[0], Integer.parseInt(nim[1]), Integer.parseInt(nim[2])));
+									tmp.next_station.add(
+											new n_s(nim[0], Integer.parseInt(nim[1]) - 1, Integer.parseInt(nim[2])));
 								}
-								System.out.println();
 
 							}
 						}
@@ -226,13 +235,17 @@ public class Main extends Application {
 
 		String URL = "https://github.com/IMjaeyongpark/2022/blob/main/2-2/Basic%20Project2/project/data";
 		crawling(URL);
+		Station start, end;
+		start = St.get("수인분당선").get(33);
+		end = St.get("에버라인").get(4);
+		n_s sol = dijkstra(start, end);
 
-		/*
-		 * for (Map.Entry<String, ArrayList<Station>> pair : St.entrySet()) { ArrayList
-		 * tmp = pair.getValue(); for (int i = 0; i < tmp.size(); i++) { Station cur =
-		 * (Station) tmp.get(i); sb.append(String.format("호선:%s 역이름:%s 역번호:%s\n",
-		 * cur.line, cur.Station_name, cur.Station_num)); } } System.out.println(sb);
-		 */
+		System.out.println(String.format("%s %d %d", sol.line, sol.Station_num, sol.time));
+
+		for (int i = 0; i < sol.transfer.size(); i++) {
+			var s = sol.transfer.get(i);
+			System.out.println(s.line + " " + s.Station_name + " " + s.time);
+		}
 
 		launch(args);
 	}
