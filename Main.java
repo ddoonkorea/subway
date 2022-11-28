@@ -5,14 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.PriorityQueue;
-import java.lang.Object;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -75,21 +72,24 @@ class Transfer {
 
 }
 
+
 @SuppressWarnings("unused")
 public class Main extends Application {
-
+	
+	
 	// javafx실행
 	@Override
 	public void start(Stage primaryStage) {
+		
 		try {
 			Parent root = FXMLLoader.load(getClass().getResource("root.fxml"));
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-
+			
+			
 			primaryStage.setTitle("지하철 길찾기");
-			primaryStage.setResizable(false);
+			primaryStage.setResizable(true);
 			primaryStage.setScene(scene);
-
 			primaryStage.show();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -102,8 +102,6 @@ public class Main extends Application {
 
 	// 길찾기(다익스트라 알고리즘)
 	static n_s dijkstra(Station start, Station end) {
-
-		System.out.println(start.Station_name + " " + end.Station_name);
 
 		// 효율적으로 최솟값을 찾기위한 우선순위큐
 		PriorityQueue<n_s> pq = new PriorityQueue<n_s>();
@@ -144,13 +142,14 @@ public class Main extends Application {
 									+ next.time) {
 						time.get(next.line)[next.Station_num] = time.get(cur.line)[cur.Station_num] + next.time;
 						temp = new n_s();
-						if (!cur.line.equals(next.line)) {
-
-							cur.transfer.add(new Transfer(St.get(cur.line).get(cur.Station_num).Station_name,
-									next.line, time.get(next.line)[next.Station_num]));
-						}
 						temp = copy(next, time.get(next.line)[next.Station_num],
 								(ArrayList<Transfer>) cur.transfer.clone());
+						if (!cur.line.equals(next.line)&&cur.time!=0) {
+
+							temp.transfer.add(new Transfer(St.get(cur.line).get(cur.Station_num).Station_name,
+									next.line, time.get(next.line)[next.Station_num]));
+						}
+						
 						
 						pq.add(temp);
 					}
@@ -231,21 +230,9 @@ public class Main extends Application {
 	}
 
 	public static void main(String[] args) {
-		var sb = new StringBuilder();
 
 		String URL = "https://github.com/IMjaeyongpark/2022/blob/main/2-2/Basic%20Project2/project/data";
 		crawling(URL);
-		Station start, end;
-		start = St.get("수인분당선").get(33);
-		end = St.get("에버라인").get(4);
-		n_s sol = dijkstra(start, end);
-
-		System.out.println(String.format("%s %d %d", sol.line, sol.Station_num, sol.time));
-
-		for (int i = 0; i < sol.transfer.size(); i++) {
-			var s = sol.transfer.get(i);
-			System.out.println(s.line + " " + s.Station_name + " " + s.time);
-		}
 
 		launch(args);
 	}
