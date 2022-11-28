@@ -130,7 +130,7 @@ public class Main extends Application {
 		// 다익스트라 알고리즘
 		while (!pq.isEmpty()) {
 			n_s cur = pq.poll();
-			if (cur.line.equals(end.line) && cur.Station_num == end.Station_num) {
+			if (cur.Station_name.equals(end.Station_name)) {
 				return cur;
 			}
 			if (!visit.get(cur.line)[cur.Station_num]) {
@@ -161,7 +161,7 @@ public class Main extends Application {
 
 	static n_s copy(n_s co, int time, ArrayList<Transfer> t) {
 		n_s temp = new n_s();
-		temp.Station_name = co.Station_name;
+		temp.Station_name = St.get(co.line).get(co.Station_num).Station_name;
 		temp.line = co.line;
 		temp.time = time;
 		temp.Station_num = co.Station_num;
